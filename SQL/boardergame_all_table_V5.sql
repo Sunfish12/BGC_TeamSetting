@@ -77,7 +77,8 @@ constraint StoreMember_primary_key primary key (storeUsername));
 create table MemberFavoredType(
 username								  varchar(30),
 favoredType								  varchar(30),
-constraint MemberFavoredType_username_fk foreign key (username) references Member(username));
+constraint MemberFavoredType_username_fk foreign key (username) references Member(username),
+constraint MemberFavoredType_primary_key primary key (username));
 
 --create 檢舉名單審核表	BlackUsernameTable--
 create table TabuUsernameTable(
@@ -86,7 +87,8 @@ tabuUsername							  varchar(30),
 toTabuUsername							  varchar(30),
 tabuReason								  varchar(400),
 constraint BlackUsernameTable_blackUsername_fk foreign key (tabuUsername) references Member(username),
-constraint BlackUsernameTable_toBlackUsername_fk foreign key (toTabuUsername) references Member(username));
+constraint BlackUsernameTable_toBlackUsername_fk foreign key (toTabuUsername) references Member(username),
+constraint BlackUsernameTable_primary_key primary key (tabuId));
 
 --create 專賣店資訊	StoreInformation--
 create table StoreInformation(
@@ -129,7 +131,8 @@ satStart								  datetime,
 satEnd									  datetime,
 sunStart								  datetime,
 sunEnd									  datetime,
-constraint RentalTime_storeId_fk foreign key (storeId) references StoreInformation(storeId));
+constraint RentalTime_storeId_fk foreign key (storeId) references StoreInformation(storeId),
+constraint RentalTime_primary_key primary key (storeId));
 
 --專賣店評分	StoreScore--
 create table StoreScore(
@@ -137,7 +140,8 @@ storeId									  int,
 username								  varchar(30),
 storeScore								  float,
 storeScoreReason						  varchar(400),
-constraint StoreScore_storeId_fk foreign key (storeId) references StoreInformation(storeId));
+constraint StoreScore_storeId_fk foreign key (storeId) references StoreInformation(storeId),
+constraint StoreScore_primary_key primary key (storeId));
 
 --桌遊類型	BoardGameKind
 create table BoardGameKind(
@@ -207,7 +211,8 @@ joiner_InfoSerialNumber					  int IDENTITY (1,1),
 groupSerialNumber						  int,
 joinTime								  datetime,
 username			    				  varchar(30),
-constraint Joiner_Info_groupSerialNumber_fk foreign key (groupSerialNumber) references GroupRoom (groupSerialNumber));
+constraint Joiner_Info_groupSerialNumber_fk foreign key (groupSerialNumber) references GroupRoom (groupSerialNumber),
+constraint Joiner_Info_primary_key primary key (joiner_InfoSerialNumber));
 
 --私人房間(店家場)留言	GroupRoomMessage
 create table GroupRoomMessage(
@@ -216,7 +221,8 @@ groupSerialNumber						  int,
 messageUsername							  varchar(30),
 messageContents							  varchar(400),
 messageTime							      dateTime,
-constraint GroupRoomMessage_groupSerialNumber_fk foreign key (groupSerialNumber) references GroupRoom (groupSerialNumber));
+constraint GroupRoomMessage_groupSerialNumber_fk foreign key (groupSerialNumber) references GroupRoom (groupSerialNumber),
+constraint GroupRoomMessage_primary_key primary key (groupRoomMessageSerialNumber));
 
 --私人房間(店家場)所選桌遊	GroupChoiceGames
 create table GroupChoiceGames(
@@ -259,7 +265,8 @@ create table JoinerInfoStoreGroup(
 groupSerialNumber						  int,
 joinTime								  datetime,
 username								  varchar(30),
-constraint JoinerInfoStoreGroup_groupSerialNumber_fk foreign key (groupSerialNumber) references StoreGroupRoom (groupSerialNumber));
+constraint JoinerInfoStoreGroup_groupSerialNumber_fk foreign key (groupSerialNumber) references StoreGroupRoom (groupSerialNumber),
+constraint JoinerInfoStoreGroup_primary_key primary key (groupSerialNumber));
 
 --店家活動留言	StoreGroupRoomMessage
 create table StoreGroupRoomMessage(
@@ -269,7 +276,8 @@ storeUsername							  varchar(30),
 messageUsername							  varchar(30),
 messageContents							  varchar(400),
 messageTime								  dateTime,
-constraint StoreGroupRoomMessage_groupSerialNumber_fk foreign key (groupSerialNumber) references StoreGroupRoom (groupSerialNumber));
+constraint StoreGroupRoomMessage_groupSerialNumber_fk foreign key (groupSerialNumber) references StoreGroupRoom (groupSerialNumber),
+constraint StoreGroupRoomMessage_primary_key primary key (storeGroupRoomMessageSerialNumber));
 
 --店家房間(店家場)所選桌遊	StoreGroupChoiceGames
 create table StoreGroupChoiceGames(
@@ -316,7 +324,8 @@ create table JoinerInfoPrivateGroupRoom(
 privateGroupSerialNumber				  int,
 joinTime								  datetime,
 username								  varchar(30),
-constraint JoinerInfoPrivateGroupRoom_privateGroupSerialNumber_fk foreign key (privateGroupSerialNumber) references PrivateGroupRoom(privateGroupSerialNumber));
+constraint JoinerInfoPrivateGroupRoom_privateGroupSerialNumber_fk foreign key (privateGroupSerialNumber) references PrivateGroupRoom(privateGroupSerialNumber),
+constraint JoinerInfoPrivateGroupRoom_primary_key primary key (privateGroupSerialNumber));
 
 --私人房間(私人場)留言	PrivateGroupRoomMessage
 create table PrivateGroupRoomMessage(
@@ -325,7 +334,8 @@ privateGroupSerialNumber				  int,
 messageUsername							  varchar(30),
 messageContents							  varchar(400),
 messageTime								  dateTime,
-constraint PrivateGroupRoomMessage_privateGroupSerialNumber_fk foreign key (privateGroupSerialNumber) references PrivateGroupRoom(privateGroupSerialNumber));
+constraint PrivateGroupRoomMessage_privateGroupSerialNumber_fk foreign key (privateGroupSerialNumber) references PrivateGroupRoom(privateGroupSerialNumber),
+constraint PrivateGroupRoomMessage_primary_key primary key (privateGroupRoomMessageSerialNumber));
 
 --私人房間(私人場)所選桌遊	PrivateChoiceGames
 create table PrivateChoiceGames(
@@ -341,4 +351,5 @@ constraint PrivateChoiceGames_boardGameStyle_fk foreign key (boardGameStyle) ref
 create table PrivateGroupGamesItem(
 privateGroupSerialNumber				  int,
 privateGroupGames						  varchar(20),
-constraint PrivateGroupGamesItem_privateGroupSerialNumber_fk foreign key (privateGroupSerialNumber) references PrivateGroupRoom(privateGroupSerialNumber));
+constraint PrivateGroupGamesItem_privateGroupSerialNumber_fk foreign key (privateGroupSerialNumber) references PrivateGroupRoom(privateGroupSerialNumber),
+constraint PrivateGroupGamesItem_primary_key primary key (privateGroupSerialNumber));
