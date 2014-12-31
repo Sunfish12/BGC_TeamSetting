@@ -9,29 +9,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StoreScoreDAOjdbc implements StoreScoreDAO
-{
+public class StoreScoreDAOjdbc implements StoreScoreDAO {
 	private static final String URL = "jdbc:sqlserver://localhost:1433;database=boardgames";
 	private static final String USERNAME = "sa";
 	private static final String PASSWORD = "123456";
 
 	private static final String SELECT_BY_ID = "select * from StorScore where storeId = ?";
+
 	@Override
-	public StoreScoreBean select(Integer storeId) 
-	{
+	public StoreScoreBean select(Integer storeId) {
 		StoreScoreBean result = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rset = null;
-		
+
 		try {
-			conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			stmt = conn.prepareStatement(SELECT_BY_ID);
 			stmt.setInt(1, storeId);
 			rset = stmt.executeQuery();
-			
-			if(rset.next())
-			{
+
+			if (rset.next()) {
 				result = new StoreScoreBean();
 				result.setStoreId(rset.getInt("storeId"));
 				result.setUsername(rset.getString("username"));
@@ -40,24 +38,22 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
-			if (conn!=null) {
+		} finally {
+			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
-			if (stmt!=null) {
+			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
-			if (rset!=null) {
+			if (rset != null) {
 				try {
 					rset.close();
 				} catch (SQLException e) {
@@ -69,21 +65,20 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 	}
 
 	public static final String SELECT_ALL = "select * from StoreScore";
+
 	@Override
-	public List<StoreScoreBean> select() 
-	{
+	public List<StoreScoreBean> select() {
 		List<StoreScoreBean> result = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rset = null;
-		
+
 		try {
-			conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			stmt = conn.prepareStatement(SELECT_ALL);
 			rset = stmt.executeQuery();
 			result = new ArrayList<StoreScoreBean>();
-			while(rset.next())
-			{
+			while (rset.next()) {
 				StoreScoreBean ssbean = new StoreScoreBean();
 				ssbean.setStoreId(rset.getInt("storeId"));
 				ssbean.setStoreScore(rset.getDouble("storeScore"));
@@ -94,10 +89,8 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally
-		{
-			if (conn!=null) {
+		} finally {
+			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
@@ -105,7 +98,7 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 					e.printStackTrace();
 				}
 			}
-			if (stmt!=null) {
+			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (SQLException e) {
@@ -113,7 +106,7 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 					e.printStackTrace();
 				}
 			}
-			if (rset!=null) {
+			if (rset != null) {
 				try {
 					rset.close();
 				} catch (SQLException e) {
@@ -125,28 +118,26 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 		return null;
 	}
 
-	public static final String insert = "insert into StoreScore(storeId = ?,storeScore = ?,storeScoreReason = ? where username = ?)";
+	public static final String insert = "insert into StoreScore(storeId,username,storeScore,storeScoreReason) values(?,?,?,?)";
+
 	@Override
-	public StoreScoreBean insert(StoreScoreBean ssbean, InputStream is,
-			long size) 
-	{
-		
+	public StoreScoreBean insert(StoreScoreBean ssbean) {
+
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		StoreScoreBean result = null;
-		
+
 		try {
-			conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			stmt = conn.prepareStatement(insert);
-			
+
 			result = new StoreScoreBean();
 			stmt.setInt(1, ssbean.getStoreId());
-			stmt.setDouble(2, ssbean.getStoreScore());
-			stmt.setString(3, ssbean.getStoreScoreReason());
-			
-			int i =stmt.executeUpdate();
-			if(i==1)
-			{
+			stmt.setString(2, ssbean.getUsername());
+			stmt.setDouble(3, ssbean.getStoreScore());
+			stmt.setString(4, ssbean.getStoreScoreReason());
+			int i = stmt.executeUpdate();
+			if (i == 1) {
 				System.out.println("Insert successfully!");
 				return ssbean;
 			}
@@ -154,30 +145,29 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// TODO Auto-generated method stub
 		return result;
 	}
 
 	public static final String UPDATE = "update StoreScore set storeId=?,storeScore=?,storeScoreReason=? where username=?";
+
 	@Override
-	public StoreScoreBean update(StoreScoreBean ssbean, InputStream is,
-			long size) 
-	{
+	public StoreScoreBean update(StoreScoreBean ssbean) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		StoreScoreBean result = null;
-		
+
 		try {
-			conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			stmt = conn.prepareStatement(UPDATE);
 			stmt.setInt(1, ssbean.getStoreId());
-			stmt.setDouble(2, ssbean.getStoreScore());
-			stmt.setString(3, ssbean.getStoreScoreReason());
-			
+			stmt.setString(2, ssbean.getUsername());
+			stmt.setDouble(3, ssbean.getStoreScore());
+			stmt.setString(4, ssbean.getStoreScoreReason());
+
 			int i = stmt.executeUpdate();
-			if(i==1)
-			{
+			if (i == 1) {
 				System.out.println("Update successfully!");
 				return ssbean;
 			}
@@ -188,31 +178,28 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 		// TODO Auto-generated method stub
 		return result;
 	}
-   
+
 	public static final String DELETE = "delete from StoreScore where username = ?";
+
 	@Override
-	public boolean delete(Integer storeId) 
-	{
-		Connection conn= null;
+	public boolean delete(Integer storeId) {
+		Connection conn = null;
 		PreparedStatement stmt = null;
-		
+
 		try {
-			conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 			stmt = conn.prepareStatement(DELETE);
 			stmt.setInt(1, storeId);
-			int i =stmt.executeUpdate();
-			if(i==1)
-			{
+			int i = stmt.executeUpdate();
+			if (i == 1) {
 				System.out.println("Delete succefully!");
 				return true;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally
-		{
-			if (conn!=null) {
+		} finally {
+			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
@@ -220,7 +207,7 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 					e.printStackTrace();
 				}
 			}
-			if (stmt!=null) {
+			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (SQLException e) {
@@ -231,5 +218,21 @@ public class StoreScoreDAOjdbc implements StoreScoreDAO
 		}
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public static void main(String[] args) {
+		StoreScoreDAOjdbc dao = new StoreScoreDAOjdbc();
+		StoreScoreBean ssbean = new StoreScoreBean();
+		// insert
+		try {
+			ssbean.setStoreId(2);
+			ssbean.setUsername("Bob4");
+			ssbean.setStoreScore(10.0);
+			ssbean.setStoreScoreReason("It's really perfact!");
+			dao.insert(ssbean);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

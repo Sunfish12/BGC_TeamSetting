@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 {
 	private static final String URL = "jdbc:sqlserver://localhost:1433;database=boardgames";
@@ -34,8 +35,8 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 			if(rset.next())
 			{
 				result = new StoreInformationImageBean();
-				result.setStoreImageId(rset.getInt("StoreImageId"));
 				result.setStoreId(rset.getInt("StoreId"));
+				result.setStoreImageId(rset.getInt("StoreImageId"));
 				result.setBoardGameHelp(rset.getString("BoardGameHelp"));
 				result.setImgFileName(rset.getString("ImgFileName"));
 				result.setAreaImage(rset.getBytes("AreaImage"));
@@ -90,7 +91,7 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 				sibean.setStoreImageId(rset.getInt("StoreImageId"));
 				sibean.setStoreId(rset.getInt("StoreId"));
 				sibean.setBoardGameHelp(rset.getString("BoardGameHelp"));
-				sibean.setImgFileName(rset.getString(rset.getString("ImgFileName")));
+				sibean.setImgFileName(rset.getString("imgFileName"));
 				sibean.setAreaImage(rset.getBytes("AreaImage"));
 				result.add(sibean);
 			}
@@ -123,11 +124,11 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 		return result;
 	}
 	
-	public static final String UPDATE = "update StoreInformationImage set storeId=?,boradGameHelp=?,"
-			+ "areaImage=?,imgFileName=? where storeImageId=?";
+	public static final String UPDATE = "update StoreInformationImage set storeId=?,boardGameHelp=?,"
+			+ "imgFileName=?,areaImage=? where storeImageId=?";
 	@Override
 	public StoreInformationImageBean update(StoreInformationImageBean sibean,
-			InputStream is, long size) 
+			InputStream is, long size,String filename) 
 	{
 		Connection conn = null;
 		PreparedStatement stmt =null;
@@ -137,10 +138,22 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 			conn = DriverManager.getConnection(URL,USERNAME,PASSWORD);
 			stmt = conn.prepareStatement(UPDATE);
 			stmt.setInt(1, sibean.getStoreId());
-			stmt.setInt(2, sibean.getStoreImageId());
-			stmt.setString(3, sibean.getBoardGameHelp());
-			stmt.setString(4, sibean.getImgFileName());
-			stmt.setBinaryStream(5, is, size);
+			stmt.setString(2, sibean.getBoardGameHelp());
+			if(filename!=null)
+			{
+				stmt.setString(3, filename);
+			}
+			else
+			{
+				stmt.setString(3, null);
+			}
+			
+			if (is != null && size != 0) {
+				stmt.setBinaryStream(4, is,size);
+			} else {
+				stmt.setBinaryStream(4, null, 0);
+			}
+			stmt.setInt(5, sibean.getStoreImageId());
 			
 			int i =stmt.executeUpdate();
 			if(i==1)
@@ -151,13 +164,14 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 		return result;
 	}
-	public static final String insert = "insert into StoreInformationImage (storeId,boardGameHelp,imgFileName,areaImage)"
-			+ " values (?,?,?,?)";
+	public static final String insert = "insert into StoreInformationImage (storeId,storeImageId,boardGameHelp,imgFileName,areaImage)"
+			+ " values (?,?,?,?,?)";
 	@Override
 	public StoreInformationImageBean insert(StoreInformationImageBean sibean,
-			InputStream is, long size) 
+			InputStream is, long size,String filename) 
 	{
 		Connection conn= null;
 		PreparedStatement stmt = null;
@@ -169,9 +183,22 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 			
 			result = new StoreInformationImageBean();
 			stmt.setInt(1, sibean.getStoreId());
-			stmt.setString(2, sibean.getBoardGameHelp());
-			stmt.setString(3, sibean.getImgFileName());
-			stmt.setBinaryStream(4, is, size);
+			stmt.setInt(2, sibean.getStoreImageId());
+			stmt.setString(3, sibean.getBoardGameHelp());
+			if(filename!=null)
+			{
+				stmt.setString(4, filename);
+			}
+			else
+			{
+				stmt.setString(4, null);
+			}
+			
+			if (is != null && size != 0) {
+				stmt.setBinaryStream(5, is,size);
+			} else {
+				stmt.setBinaryStream(5, null, 0);
+			}
 			
 			int i = stmt.executeUpdate();
 			if(i==1)
@@ -182,6 +209,25 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally
+		{
+			if (conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (stmt!=null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return result;
 	}
@@ -229,27 +275,56 @@ public class StoreInformationImageDAOjdbc implements StoreInformationImageDAO
 	public static void main(String[] args)
 	{
 		StoreInformationImageDAOjdbc dao= new StoreInformationImageDAOjdbc();
-		//insert
 		StoreInformationImageBean sibean = new StoreInformationImageBean();
+		
+		//insert
+//		sibean.setStoreId(3);
+//		sibean.setStoreImageId(6);
+//		sibean.setBoardGameHelp("but it's seems a little weird");
+//		String filename="test02";
+//		sibean.setImgFileName(filename);
+//		File f = new File("img/0003002.jpg");
+//		long size = 0;
+//		InputStream is = null;
+//		try {
+//		size = f.length();
+//		is = new FileInputStream(f);
+//		} catch (FileNotFoundException e) {
+//		e.printStackTrace();
+//		}
+//		dao.insert(sibean, is, size, filename);
+			
+		//select all
+//		List<StoreInformationImageBean> sibean = dao.select();
+//		System.out.println(sibean);
+		
+		//select by id
+//		System.out.println(dao.select(2));
+		
+		//update
 		File f = null;
 		FileInputStream fis = null;
 		
 		try {
-			f = new File("img/rola.jpg");
+			f = new File("img/0000.jpg");
 			fis = new FileInputStream(f);
 			long length = f.length();
-			sibean.setStoreId(001);
-			sibean.setStoreImageId(10001);
-			sibean.setImgFileName("Test01");
-			sibean.setBoardGameHelp("This is a test image");
-			dao.insert(sibean, fis, length);
-		} catch (FileNotFoundException e) {
+			
+			sibean.setStoreImageId(3);
+			sibean.setStoreId(2);
+			sibean.setBoardGameHelp("Just fixing...");
+			String filename="test.jpg";
+			sibean.setImgFileName(filename);
+			System.out.println(dao.update(sibean,fis,length,filename));
+			sibean = dao.select(3);
+			System.out.println(sibean);
+		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch (IOException e) {
+			e1.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-}
+}	
+
