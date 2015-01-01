@@ -75,10 +75,11 @@ constraint StoreMember_primary_key primary key (storeUsername));
 
 --create會員喜好桌遊類型MemberFavoredType--
 create table MemberFavoredType(
+memberId								  int,
 username								  varchar(30),
 favoredType								  varchar(30),
 constraint MemberFavoredType_username_fk foreign key (username) references Member(username),
-constraint MemberFavoredType_primary_key primary key (username));
+constraint MemberFavoredType_primary_key primary key (memberId));
 
 --create 檢舉名單審核表	BlackUsernameTable--
 create table TabuUsernameTable(
